@@ -149,12 +149,12 @@
     border-radius: 16px; padding: 3rem;
     text-align: center; cursor: pointer;
     transition: all 0.3s; background: var(--bg2);
-    position: relative;
+    display: block;
   }
   .upload-zone:hover, .upload-zone.drag-over {
     border-color: var(--accent); background: rgba(59,130,246,0.05);
   }
-  .upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+  .upload-zone input { display:none; }
   .upload-icon { font-size: 3rem; margin-bottom: 1rem; }
   .upload-zone h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
   .upload-zone p { color: var(--text2); font-size: 0.875rem; }
@@ -783,12 +783,12 @@
     <p style="color:var(--text2);font-size:0.875rem;margin-bottom:1rem">
       편한가계부에서 내보낸 엑셀 파일(.xlsx)을 월별로 업로드하세요. 여러 파일을 업로드하면 자동으로 합산됩니다.
     </p>
-    <div class="upload-zone" id="upload-zone">
-      <input type="file" id="file-input" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)" onclick="event.stopPropagation()" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">
+    <label for="file-input" class="upload-zone" id="upload-zone">
+      <input type="file" id="file-input" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)" style="display:none;">
       <div class="upload-icon">📂</div>
       <h3>엑셀 파일을 드래그하거나 클릭하여 업로드</h3>
       <p>편한가계부 내보내기 파일(.xlsx) · 여러 파일 동시 업로드 가능</p>
-    </div>
+    </label>
     <div class="upload-history" id="upload-history"></div>
   </div>
 
