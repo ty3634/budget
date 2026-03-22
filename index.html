@@ -784,7 +784,7 @@
       편한가계부에서 내보낸 엑셀 파일(.xlsx)을 월별로 업로드하세요. 여러 파일을 업로드하면 자동으로 합산됩니다.
     </p>
     <div class="upload-zone" id="upload-zone">
-      <input type="file" id="file-input" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;">
+      <input type="file" id="file-input" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)" style="position:fixed;top:-300px;left:-300px;width:1px;height:1px;opacity:0;">
       <div class="upload-icon">📂</div>
       <h3>엑셀 파일을 업로드하세요</h3>
       <p>편한가계부 내보내기 파일(.xlsx) · 여러 파일 동시 업로드 가능</p>
@@ -942,11 +942,13 @@ function showSection(id) {
   closeMobileNav();
   // PC nav 버튼 active
   document.querySelectorAll('#main-nav button').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('onclick').includes(id));
+    const oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', oc.includes(id));
   });
   // 모바일 nav 버튼 active
   document.querySelectorAll('#mobile-nav button').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('onclick').includes(id));
+    const oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', oc.includes(id));
   });
   if (id === 'dashboard') renderDashboard();
   if (id === 'cattrend') renderCatTrend();
@@ -1047,12 +1049,15 @@ function removeFile(fileName) {
 function renderUploadHistory() {
   const el = document.getElementById('upload-history');
   if (!el) return;
-  el.innerHTML = uploadedFiles.map(f => `
+  el.innerHTML = uploadedFiles.map((f, i) => `
     <div class="upload-pill">
       📄 ${f.name} <span style="color:var(--text3)">(${f.month})</span>
-      <span class="remove" onclick="removeFile('${f.name}')">✕</span>
+      <span class="remove" data-file-idx="${i}">✕</span>
     </div>
   `).join('');
+  el.querySelectorAll('.remove[data-file-idx]').forEach(span => {
+    span.addEventListener('click', () => removeFile(uploadedFiles[+span.dataset.fileIdx]?.name));
+  });
 }
 
 function renderUploadPreview() {
@@ -1510,7 +1515,10 @@ function renderAssets() {
         <td style="text-align:right;color:var(--text2)" class="mono">${a.qty.toLocaleString()}</td>
         <td style="text-align:right;font-weight:600" class="mono">${fmt(val)}</td>
         <td style="text-align:right" class="${assetPnl>=0?'amount-income':'amount-expense'} mono">${assetPnl>=0?'+':''}${fmt(Math.round(assetPnl))}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="removeAsset('${a.id}')">✕</button></td>
+        <td style="display:flex;gap:4px;align-items:center">
+          <button class="btn btn-sm" onclick="openSellModal('${a.id}')" style="background:rgba(16,185,129,0.15);color:var(--green2);border:1px solid rgba(16,185,129,0.3)">매도</button>
+          <button class="btn btn-danger btn-sm" onclick="removeAsset('${a.id}')">✕</button>
+        </td>
       </tr>`;
     }).join('');
   }
