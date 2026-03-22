@@ -57,58 +57,58 @@
     background: rgba(10,15,30,0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
-    padding: 0 1.5rem;
+    padding: 0 1rem;
     display: flex; align-items: center; justify-content: space-between;
-    height: 60px;
+    height: 56px; min-height: 56px;
+    overflow: visible;
   }
-  .logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px; }
+  .logo {
+    font-size: 1rem; font-weight: 800; letter-spacing: -0.5px;
+    white-space: nowrap; flex-shrink: 0;
+  }
   .logo span { color: var(--accent); }
 
   /* PC 네비게이션 */
-  #main-nav { display: flex; gap: 2px; }
+  #main-nav { display: flex; gap: 2px; align-items: center; }
   #main-nav button {
     background: none; border: none; cursor: pointer;
     color: var(--text2); font-family: 'Pretendard', sans-serif;
-    font-size: 0.875rem; font-weight: 500;
-    padding: 6px 14px; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 500;
+    padding: 6px 12px; border-radius: 8px;
     transition: all 0.2s; white-space: nowrap;
   }
   #main-nav button:hover { background: var(--bg3); color: var(--text); }
   #main-nav button.active { background: var(--accent); color: #fff; }
 
-  /* 모바일 네비게이션 오버레이 */
+  /* 햄버거 버튼 - 기본 숨김 */
+  #hamburger-btn {
+    display: none; flex-direction: column; gap: 5px;
+    align-items: center; justify-content: center;
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: none; border: none; cursor: pointer; padding: 8px;
+  }
+  #hamburger-btn span {
+    display: block; width: 22px; height: 2px;
+    background: var(--text); border-radius: 2px;
+  }
+
+  /* 모바일 전체화면 메뉴 */
   #mobile-nav {
-    display: none;
-    position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
-    z-index: 9999;
-    background: rgba(10,15,30,0.98);
-    flex-direction: column;
-    padding: 1rem;
-    gap: 6px;
+    display: none; position: fixed;
+    top: 56px; left: 0; right: 0; bottom: 0;
+    z-index: 9999; background: #0a0f1e;
+    flex-direction: column; padding: 1rem; gap: 4px;
     overflow-y: auto;
   }
   #mobile-nav button {
     background: none; border: none; cursor: pointer;
-    color: var(--text2); font-family: 'Pretendard', sans-serif;
-    font-size: 1.05rem; font-weight: 600;
-    padding: 16px 20px; border-radius: 12px;
+    color: var(--text); font-family: 'Pretendard', sans-serif;
+    font-size: 1.1rem; font-weight: 600;
+    padding: 18px 20px; border-radius: 12px;
     text-align: left; width: 100%;
-    transition: background 0.2s;
+    border-bottom: 1px solid var(--border);
   }
-  #mobile-nav button:active { background: var(--bg3); }
-  #mobile-nav button.active { background: var(--accent); color: #fff; }
-
-  /* 햄버거 버튼 */
-  #hamburger-btn {
-    display: none;
-    flex-direction: column; gap: 5px; justify-content: center; align-items: center;
-    width: 44px; height: 44px;
-    background: none; border: none; cursor: pointer; padding: 10px;
-  }
-  #hamburger-btn span {
-    display: block; width: 22px; height: 2px;
-    background: var(--text); border-radius: 2px; transition: all 0.25s;
-  }
+  #mobile-nav button.active { background: var(--accent); color: #fff; border-bottom-color: transparent; }
 
   /* ── LAYOUT ── */
   main { position:relative; z-index:1; max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; }
@@ -149,12 +149,12 @@
     border-radius: 16px; padding: 3rem;
     text-align: center; cursor: pointer;
     transition: all 0.3s; background: var(--bg2);
-    position: relative;
+    display: block;
   }
   .upload-zone:hover, .upload-zone.drag-over {
     border-color: var(--accent); background: rgba(59,130,246,0.05);
   }
-  .upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+  .upload-zone input { display:none; }
   .upload-icon { font-size: 3rem; margin-bottom: 1rem; }
   .upload-zone h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
   .upload-zone p { color: var(--text2); font-size: 0.875rem; }
@@ -322,17 +322,60 @@
     main { padding: 1rem; }
   }
 
-  /* ── MOBILE (≤600px) ── */
-  @media(max-width:600px) {
-    /* 헤더: 로고 + 햄버거 버튼 */
-    header { padding: 0 1rem; height: 54px; }
-    .logo { font-size: 1rem; }
+  /* ── MOBILE (≤768px) ── */
+  @media(max-width:768px) {
+    /* 레이아웃 */
+    main { padding: 0.75rem; }
+    .grid-4 { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .card { padding: 1rem; border-radius: 12px; }
+    .card-value { font-size: 1.3rem; }
+    .sec-title { font-size: 1.1rem; margin-bottom: 1rem; }
 
-  /* ── 매우 작은 화면 (≤380px) ── */
+    /* 자산 입력 폼 */
+    .asset-form { grid-template-columns: 1fr; gap: 8px; padding: 1rem; }
+    .asset-form .btn { width: 100%; padding: 12px; margin-top: 4px; }
+
+    /* 테이블 */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 480px; }
+    thead th { font-size: 0.68rem; padding: 8px 10px; }
+    tbody td { font-size: 0.78rem; padding: 8px 10px; }
+
+    /* 차트 */
+    .chart-wrap { height: 200px; }
+    .chart-wrap-tall { height: 240px; }
+
+    /* 대시보드 버튼 */
+    .dash-actions { flex-wrap: wrap; gap: 6px; }
+    .dash-actions .btn { font-size: 0.72rem; padding: 6px 10px; }
+
+    /* 카테고리 탭 */
+    .asset-type-tabs { gap: 6px; }
+    .type-tab { padding: 5px 10px; font-size: 0.75rem; }
+
+    /* KPI 카드 */
+    .card-title { font-size: 0.65rem; }
+    .card-sub { font-size: 0.72rem; }
+
+    /* 5열 그리드 → 2열 */
+    #asset-kpis { grid-template-columns: repeat(2,1fr) !important; }
+
+    /* 그리드 3열 → 1열 */
+    .grid-3 { grid-template-columns: 1fr; }
+
+    /* 업로드 존 */
+    .upload-zone { padding: 1.5rem 1rem; }
+    .upload-icon { font-size: 2rem; }
+    .upload-zone h3 { font-size: 0.95rem; }
+
+    /* 예산 테이블 input */
+    #budget-table-body input[type=number] { width: 90px !important; }
+  }
+
+  /* ── 소형 모바일 (≤380px) ── */
   @media(max-width:380px) {
     .grid-4 { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
     .card-value { font-size: 1.1rem; }
-    nav button { font-size: 0.95rem; }
   }
 
   /* Upload history pills */
@@ -402,15 +445,6 @@
     <span></span><span></span><span></span>
   </button>
 </header>
-
-<!-- 모바일 네비게이션 오버레이 -->
-<div id="mobile-nav">
-  <button onclick="showSection('dashboard')">🏠 대시보드</button>
-  <button onclick="showSection('budget')">💰 예산관리</button>
-  <button onclick="showSection('cattrend')">📈 카테고리 추이</button>
-  <button onclick="showSection('assets')">💼 자산추적</button>
-  <button onclick="showSection('upload')">📂 파일 업로드</button>
-</div>
 
 <main>
 
@@ -750,10 +784,11 @@
       편한가계부에서 내보낸 엑셀 파일(.xlsx)을 월별로 업로드하세요. 여러 파일을 업로드하면 자동으로 합산됩니다.
     </p>
     <div class="upload-zone" id="upload-zone">
-      <input type="file" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)">
+      <input type="file" id="file-input" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)" style="position:fixed;top:-300px;left:-300px;width:1px;height:1px;opacity:0;">
       <div class="upload-icon">📂</div>
-      <h3>엑셀 파일을 드래그하거나 클릭하여 업로드</h3>
+      <h3>엑셀 파일을 업로드하세요</h3>
       <p>편한가계부 내보내기 파일(.xlsx) · 여러 파일 동시 업로드 가능</p>
+      <button type="button" onclick="document.getElementById('file-input').click()" style="margin-top:1.25rem;padding:12px 32px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">📂 파일 선택하기</button>
     </div>
     <div class="upload-history" id="upload-history"></div>
   </div>
@@ -820,6 +855,31 @@ window.onload = () => {
     console.error('초기화 오류:', e);
   }
 };
+
+// ══════════════════════════════════════════
+// 월 기준: 매월 20일 ~ 다음달 19일
+// ══════════════════════════════════════════
+function getBudgetMonth(dateObj) {
+  if (!dateObj || isNaN(dateObj)) return '알수없음';
+  // 20일 이상 → 해당 달 / 1~19일 → 전달 (편한가계부 기준: 20일~다음달 19일)
+  const d = dateObj.getDate() < 20
+    ? new Date(dateObj.getFullYear(), dateObj.getMonth() - 1, 1)
+    : dateObj;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function getBudgetMonthLabel(dateObj) {
+  const bm = getBudgetMonth(dateObj);
+  if (bm === '알수없음') return bm;
+  const [y, m] = bm.split('-');
+  return `${y}년 ${parseInt(m)}월`;
+}
+function getCurrentBudgetMonth() { return getBudgetMonth(new Date()); }
+function getPrevBudgetMonth() {
+  const bm = getCurrentBudgetMonth();
+  const [y, m] = bm.split('-').map(Number);
+  const d = new Date(y, m - 2, 1); // m-1 is current month (0-indexed), m-2 is prev
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
 
 function loadState() {
   try {
@@ -895,15 +955,6 @@ document.addEventListener('click', function(e) {
 
 function closeNav() { closeMobileNav(); }
 
-// 모바일 메뉴 외부 클릭 시 닫기
-document.addEventListener('click', function(e) {
-  const nav = document.getElementById('main-nav');
-  const btn = document.getElementById('hamburger');
-  if (nav && nav.classList.contains('open') &&
-      !nav.contains(e.target) && !btn.contains(e.target)) {
-    closeNav();
-  }
-});
 
 // ══════════════════════════════════════════
 // NAVIGATION
@@ -916,11 +967,13 @@ function showSection(id) {
   closeMobileNav();
   // PC nav 버튼 active
   document.querySelectorAll('#main-nav button').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('onclick').includes(id));
+    const oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', oc.includes(id));
   });
   // 모바일 nav 버튼 active
   document.querySelectorAll('#mobile-nav button').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('onclick').includes(id));
+    const oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', oc.includes(id));
   });
   if (id === 'dashboard') renderDashboard();
   if (id === 'cattrend') renderCatTrend();
@@ -979,7 +1032,7 @@ function parseExcel(file) {
             const d = new Date(dateVal);
             if (!isNaN(d)) dateObj = d;
           }
-          const month = dateObj ? `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}` : '알수없음';
+          const month = getBudgetMonth(dateObj);
           
           return {
             date: dateObj ? dateObj.toISOString().slice(0,10) : dateVal.slice(0,10),
@@ -1021,12 +1074,15 @@ function removeFile(fileName) {
 function renderUploadHistory() {
   const el = document.getElementById('upload-history');
   if (!el) return;
-  el.innerHTML = uploadedFiles.map(f => `
+  el.innerHTML = uploadedFiles.map((f, i) => `
     <div class="upload-pill">
       📄 ${f.name} <span style="color:var(--text3)">(${f.month})</span>
-      <span class="remove" onclick="removeFile('${f.name}')">✕</span>
+      <span class="remove" data-file-idx="${i}">✕</span>
     </div>
   `).join('');
+  el.querySelectorAll('.remove[data-file-idx]').forEach(span => {
+    span.addEventListener('click', () => removeFile(uploadedFiles[+span.dataset.fileIdx]?.name));
+  });
 }
 
 function renderUploadPreview() {
@@ -1080,9 +1136,8 @@ function renderAll() {
 // DASHBOARD
 // ══════════════════════════════════════════
 function renderDashboard() {
-  const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const monthLabel = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
+  const thisMonth = getCurrentBudgetMonth();
+  const monthLabel = getBudgetMonthLabel(new Date());
 
   // 이번 달 데이터만 필터
   const txn = allTransactions.filter(t => t.month === thisMonth);
@@ -1092,8 +1147,7 @@ function renderDashboard() {
   const savingRate = income > 0 ? (net/income*100).toFixed(1) : 0;
 
   // 전월 비교
-  const prevDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}`;
+  const prevMonth = getPrevBudgetMonth();
   const prevTxn = allTransactions.filter(t => t.month === prevMonth);
   const prevExpense = prevTxn.filter(t=>t.type==='지출').reduce((s,t)=>s+t.amount,0);
   const expenseDelta = prevExpense > 0 ? ((expense - prevExpense) / prevExpense * 100).toFixed(1) : null;
@@ -1274,8 +1328,9 @@ function renderAnalytics() {
 // ══════════════════════════════════════════
 function setAssetTab(tab) {
   assetTab = tab;
-  document.querySelectorAll('.type-tab').forEach((b,i) => {
-    b.classList.toggle('active', ['all','한국주식','미국주식','암호화폐','ETF','저축','기타'][i] === tab);
+  document.querySelectorAll('#sec-assets .type-tab').forEach(b => {
+    const onclick = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', onclick.includes(`'${tab}'`));
   });
   renderAssets();
 }
@@ -1483,7 +1538,10 @@ function renderAssets() {
         <td style="text-align:right;color:var(--text2)" class="mono">${a.qty.toLocaleString()}</td>
         <td style="text-align:right;font-weight:600" class="mono">${fmt(val)}</td>
         <td style="text-align:right" class="${assetPnl>=0?'amount-income':'amount-expense'} mono">${assetPnl>=0?'+':''}${fmt(Math.round(assetPnl))}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="removeAsset('${a.id}')">✕</button></td>
+        <td style="display:flex;gap:4px;align-items:center">
+          <button class="btn btn-sm" onclick="openSellModal('${a.id}')" style="background:rgba(16,185,129,0.15);color:var(--green2);border:1px solid rgba(16,185,129,0.3)">매도</button>
+          <button class="btn btn-danger btn-sm" onclick="removeAsset('${a.id}')">✕</button>
+        </td>
       </tr>`;
     }).join('');
   }
@@ -1550,8 +1608,7 @@ function chartOpts(type) {
 // 월별 총 자산 추이
 // ══════════════════════════════════════════
 function recordAssetSnapshot(totalKrw) {
-  const now = new Date();
-  const key = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const key = getCurrentBudgetMonth();
   if (totalKrw > 0) {
     assetSnapshots[key] = totalKrw;
     saveState();
@@ -1652,12 +1709,11 @@ function renderMonthlyAssetChart() {
 let yearlyChart = null;
 
 function renderBudget() {
-  const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const year = now.getFullYear();
+  const thisMonth = getCurrentBudgetMonth();
+  const [year, mon] = thisMonth.split('-').map(Number);
 
   const titleEl = document.getElementById('budget-title');
-  if (titleEl) titleEl.innerHTML = `예산 <span>관리</span> <span style="font-size:0.9rem;color:var(--text2);font-weight:400">${year}년 ${now.getMonth()+1}월</span>`;
+  if (titleEl) titleEl.innerHTML = `예산 <span>관리</span> <span style="font-size:0.9rem;color:var(--text2);font-weight:400">${year}년 ${mon}월</span>`;
 
   // 이번달 카테고리별 지출
   const thisMonthExp = {};
@@ -1713,8 +1769,8 @@ function renderBudget() {
       <td style="text-align:right">
         <input type="number" value="${budget||''}" placeholder="예산 없음"
           style="width:120px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--text);font-family:'Pretendard',sans-serif;font-size:0.82rem;text-align:right;outline:none"
-          onblur="setBudget('${cat}',this.value)"
-          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+          onblur="setBudget('${cat}',this.value);this.style.borderColor='var(--border2)'"
+          onfocus="this.style.borderColor='var(--accent)'">
       </td>
       <td>
         <div style="display:flex;align-items:center;gap:8px">
@@ -1742,9 +1798,7 @@ function setBudget(cat, val) {
 }
 
 function autoFillBudget() {
-  const now = new Date();
-  const prevDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}`;
+  const prevMonth = getPrevBudgetMonth();
   const prevExp = {};
   allTransactions.filter(t => t.type==='지출' && t.month===prevMonth).forEach(t => {
     prevExp[t.category] = (prevExp[t.category]||0) + t.amount;
@@ -1834,8 +1888,7 @@ function exportCSV() {
     [t.date, t.category, t.sub, t.desc, t.asset, t.type, t.amount, t.file]
     .map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')
   );
-  const csv = '﻿' + [headers.join(','), ...rows].join('
-');
+  const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1920,14 +1973,14 @@ function renderCatTrend() {
   }
 
   // 조회일 기준: 이번 달 + 전달만
-  const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const prevDate  = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}`;
+  const thisMonth = getCurrentBudgetMonth();
+  const prevMonth = getPrevBudgetMonth();
   const months = [prevMonth, thisMonth];
 
-  const nowLabel  = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
-  const prevLabel = `${prevDate.getFullYear()}년 ${prevDate.getMonth()+1}월`;
+  const [ty, tm] = thisMonth.split('-').map(Number);
+  const [py, pm] = prevMonth.split('-').map(Number);
+  const nowLabel  = `${ty}년 ${tm}월`;
+  const prevLabel = `${py}년 ${pm}월`;
 
   // 제목 업데이트
   const titleEl = document.getElementById('ct-main-title');
@@ -2233,5 +2286,14 @@ if (_sellModal) _sellModal.addEventListener('click', function(e) {
 });
 
 </script>
+
+<!-- 모바일 네비게이션 오버레이 -->
+<div id="mobile-nav">
+  <button onclick="showSection('dashboard')">🏠 대시보드</button>
+  <button onclick="showSection('budget')">💰 예산관리</button>
+  <button onclick="showSection('cattrend')">📈 카테고리 추이</button>
+  <button onclick="showSection('assets')">💼 자산추적</button>
+  <button onclick="showSection('upload')">📂 파일 업로드</button>
+</div>
 </body>
 </html>
