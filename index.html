@@ -861,8 +861,9 @@ window.onload = () => {
 // ══════════════════════════════════════════
 function getBudgetMonth(dateObj) {
   if (!dateObj || isNaN(dateObj)) return '알수없음';
-  const d = dateObj.getDate() >= 20
-    ? new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 1)
+  // 20일 이상 → 해당 달 / 1~19일 → 전달 (편한가계부 기준: 20일~다음달 19일)
+  const d = dateObj.getDate() < 20
+    ? new Date(dateObj.getFullYear(), dateObj.getMonth() - 1, 1)
     : dateObj;
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
 }
