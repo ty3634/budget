@@ -856,6 +856,30 @@ window.onload = () => {
   }
 };
 
+// ══════════════════════════════════════════
+// 월 기준: 매월 20일 ~ 다음달 19일
+// ══════════════════════════════════════════
+function getBudgetMonth(dateObj) {
+  if (!dateObj || isNaN(dateObj)) return '알수없음';
+  const d = dateObj.getDate() >= 20
+    ? new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 1)
+    : dateObj;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function getBudgetMonthLabel(dateObj) {
+  const bm = getBudgetMonth(dateObj);
+  if (bm === '알수없음') return bm;
+  const [y, m] = bm.split('-');
+  return `${y}년 ${parseInt(m)}월`;
+}
+function getCurrentBudgetMonth() { return getBudgetMonth(new Date()); }
+function getPrevBudgetMonth() {
+  const bm = getCurrentBudgetMonth();
+  const [y, m] = bm.split('-').map(Number);
+  const d = new Date(y, m - 2, 1); // m-1 is current month (0-indexed), m-2 is prev
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
 function loadState() {
   try {
     const a = localStorage.getItem(STORAGE_ASSETS);
@@ -1007,7 +1031,7 @@ function parseExcel(file) {
             const d = new Date(dateVal);
             if (!isNaN(d)) dateObj = d;
           }
-          const month = dateObj ? `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}` : '알수없음';
+          const month = getBudgetMonth(dateObj);
           
           return {
             date: dateObj ? dateObj.toISOString().slice(0,10) : dateVal.slice(0,10),
@@ -1111,9 +1135,8 @@ function renderAll() {
 // DASHBOARD
 // ══════════════════════════════════════════
 function renderDashboard() {
-  const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const monthLabel = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
+  const thisMonth = getCurrentBudgetMonth();
+  const monthLabel = getBudgetMonthLabel(new Date());
 
   // 이번 달 데이터만 필터
   const txn = allTransactions.filter(t => t.month === thisMonth);
@@ -1123,8 +1146,7 @@ function renderDashboard() {
   const savingRate = income > 0 ? (net/income*100).toFixed(1) : 0;
 
   // 전월 비교
-  const prevDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}`;
+  const prevMonth = getPrevBudgetMonth();
   const prevTxn = allTransactions.filter(t => t.month === prevMonth);
   const prevExpense = prevTxn.filter(t=>t.type==='지출').reduce((s,t)=>s+t.amount,0);
   const expenseDelta = prevExpense > 0 ? ((expense - prevExpense) / prevExpense * 100).toFixed(1) : null;
@@ -1585,8 +1607,7 @@ function chartOpts(type) {
 // 월별 총 자산 추이
 // ══════════════════════════════════════════
 function recordAssetSnapshot(totalKrw) {
-  const now = new Date();
-  const key = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const key = getCurrentBudgetMonth();
   if (totalKrw > 0) {
     assetSnapshots[key] = totalKrw;
     saveState();
@@ -1687,12 +1708,11 @@ function renderMonthlyAssetChart() {
 let yearlyChart = null;
 
 function renderBudget() {
-  const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const year = now.getFullYear();
+  const thisMonth = getCurrentBudgetMonth();
+  const [year, mon] = thisMonth.split('-').map(Number);
 
   const titleEl = document.getElementById('budget-title');
-  if (titleEl) titleEl.innerHTML = `예산 <span>관리</span> <span style="font-size:0.9rem;color:var(--text2);font-weight:400">${year}년 ${now.getMonth()+1}월</span>`;
+  if (titleEl) titleEl.innerHTML = `예산 <span>관리</span> <span style="font-size:0.9rem;color:var(--text2);font-weight:400">${year}년 ${mon}월</span>`;
 
   // 이번달 카테고리별 지출
   const thisMonthExp = {};
@@ -1777,9 +1797,7 @@ function setBudget(cat, val) {
 }
 
 function autoFillBudget() {
-  const now = new Date();
-  const prevDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}`;
+  const prevMonth = getPrevBudgetMonth();
   const prevExp = {};
   allTransactions.filter(t => t.type==='지출' && t.month===prevMonth).forEach(t => {
     prevExp[t.category] = (prevExp[t.category]||0) + t.amount;
@@ -1954,14 +1972,14 @@ function renderCatTrend() {
   }
 
   // 조회일 기준: 이번 달 + 전달만
-  const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const prevDate  = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}`;
+  const thisMonth = getCurrentBudgetMonth();
+  const prevMonth = getPrevBudgetMonth();
   const months = [prevMonth, thisMonth];
 
-  const nowLabel  = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
-  const prevLabel = `${prevDate.getFullYear()}년 ${prevDate.getMonth()+1}월`;
+  const [ty, tm] = thisMonth.split('-').map(Number);
+  const [py, pm] = prevMonth.split('-').map(Number);
+  const nowLabel  = `${ty}년 ${tm}월`;
+  const prevLabel = `${py}년 ${pm}월`;
 
   // 제목 업데이트
   const titleEl = document.getElementById('ct-main-title');
