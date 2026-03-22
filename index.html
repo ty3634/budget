@@ -929,15 +929,6 @@ document.addEventListener('click', function(e) {
 
 function closeNav() { closeMobileNav(); }
 
-// 모바일 메뉴 외부 클릭 시 닫기
-document.addEventListener('click', function(e) {
-  const nav = document.getElementById('main-nav');
-  const btn = document.getElementById('hamburger');
-  if (nav && nav.classList.contains('open') &&
-      !nav.contains(e.target) && !btn.contains(e.target)) {
-    closeNav();
-  }
-});
 
 // ══════════════════════════════════════════
 // NAVIGATION
@@ -1308,8 +1299,9 @@ function renderAnalytics() {
 // ══════════════════════════════════════════
 function setAssetTab(tab) {
   assetTab = tab;
-  document.querySelectorAll('.type-tab').forEach((b,i) => {
-    b.classList.toggle('active', ['all','한국주식','미국주식','암호화폐','ETF','저축','기타'][i] === tab);
+  document.querySelectorAll('#sec-assets .type-tab').forEach(b => {
+    const onclick = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', onclick.includes(`'${tab}'`));
   });
   renderAssets();
 }
@@ -1747,8 +1739,8 @@ function renderBudget() {
       <td style="text-align:right">
         <input type="number" value="${budget||''}" placeholder="예산 없음"
           style="width:120px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;color:var(--text);font-family:'Pretendard',sans-serif;font-size:0.82rem;text-align:right;outline:none"
-          onblur="setBudget('${cat}',this.value)"
-          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+          onblur="setBudget('${cat}',this.value);this.style.borderColor='var(--border2)'"
+          onfocus="this.style.borderColor='var(--accent)'">
       </td>
       <td>
         <div style="display:flex;align-items:center;gap:8px">
